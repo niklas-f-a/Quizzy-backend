@@ -6,12 +6,16 @@ module.exports = {
     const {imgFile,name} = req.body
     try{
       const quiz = await Quiz.create({imgFile,name, userId:req.user.id})
-      console.log(quiz);
-      res.json({message: `Success! Quiz ${quiz.name} created`})
+      res.json({message: `Success! Quiz ${quiz.name} created. Add some quetions.`})
     }
     catch(error){
       res.json({message: error})
     }
+  },
+
+  addQuestion: async(req,res) => {
+    console.log(req.params);
+    console.log(req.body);
   }
 
 

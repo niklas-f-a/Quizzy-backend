@@ -10,6 +10,10 @@ router.post('/',
   QuizController.add
 )
 
+router.post(`/:listName/Questions`, 
+  QuizController.addQuestion
+)
+
 
 
 
