@@ -4,7 +4,12 @@ const {DataTypes, Model} = require('sequelize')
 class Quiz extends Model{}
 
 Quiz.init({
-  img_file: {
+  name: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
+  },
+  imgFile: {
     type: DataTypes.STRING,
     allowNull: true
   },

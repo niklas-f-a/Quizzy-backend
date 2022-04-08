@@ -11,7 +11,7 @@ async function seed(){
   await TakenQuiz.destroy({where: {}, truncate: true})
   
   const user1 = await User.create({email: 'bingo@bongo.com', hashPassword: 'sdjvbkjsbdvljsebdn'})
-  const quiz = await Quiz.create({img_file: 'bingo.png', userId: 1})
+  const quiz = await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bulle'})
   await quiz.createQuestion({
     question:'How many potatoes is there in Norway',
     rightAnswer: 'Blue',
