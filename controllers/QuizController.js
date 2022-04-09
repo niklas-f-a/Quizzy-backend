@@ -1,4 +1,5 @@
 const Quiz = require('../models/Quiz')
+const Question = require('../models/Question')
 
 module.exports = {
 
@@ -13,9 +14,17 @@ module.exports = {
     }
   },
 
+  getQuiz: async (req,res) => {
+    const {id} = req.body
+    const quiz = await Question.findAll({where: {QuizId: id}})
+    res.json({data: quiz})
+  },
+
   addQuestion: async(req,res) => {
-    console.log(req.params);
-    console.log(req.body);
+    const {quizId, question} = req.body
+    const quiz = await Quiz.findByPk(quizId)
+    await quiz.createQuestion({...question})
+    res.json({message: 'Added question to quiz'})
   }
 
 
