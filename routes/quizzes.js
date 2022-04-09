@@ -7,7 +7,7 @@ const router = new Router
 
 router.get(`/`, 
   Auth.verify,
-  QuizController.getQuiz
+  QuizController.getQuizQuestions
 )
   
   
@@ -16,13 +16,26 @@ router.post('/',
   QuizController.add
 )
   
-router.put(`/Questions`, 
+router.delete('/:id',
+Auth.verify,
+QuizController.delete
+)
+
+
+router.delete('/:quizId/:questionId',
+  Auth.verify,
+  QuizController.deleteQuestion
+)
+
+router.put(`/:quizId/`, 
   Auth.verify,
   QuizController.addQuestion
 )
 
-
-
+router.patch('/:quizId/:questionId',
+  Auth.verify,
+  QuizController.updateQuestion
+)
 
 
 
