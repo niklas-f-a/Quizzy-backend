@@ -5,9 +5,9 @@ const Auth = require('../middleware/auth')
 const router = new Router
 
 
-router.get(`/`, 
+router.get(`/:id`, 
   Auth.verify,
-  QuizController.getQuizQuestions
+  QuizController.getQuiz
 )
   
   
@@ -22,6 +22,11 @@ QuizController.delete
 )
 
 
+router.post('/result/:id', 
+  Auth.verify,
+  QuizController.result
+)
+
 router.delete('/:quizId/:questionId',
   Auth.verify,
   QuizController.deleteQuestion
@@ -35,6 +40,11 @@ router.put(`/:quizId/`,
 router.patch('/:quizId/:questionId',
   Auth.verify,
   QuizController.updateQuestion
+)
+
+router.get('/Taken/:id', 
+  Auth.verify,
+  QuizController.quizTaken
 )
 
 

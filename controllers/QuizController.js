@@ -1,7 +1,21 @@
 const Quiz = require('../models/Quiz')
 const Question = require('../models/Question')
+const User = require('../models/User')
+const TakenQuiz = require('../models/TakenQuiz')
 
 module.exports = {
+
+  quizTaken: async (req, res) => {
+    const {id} = req.params
+    const quizzes = await TakenQuiz.findAll({where: req.user.id})
+    const quizTaken = quizzes.some(quiz => quiz.QuizId == id)
+    if(quizTaken){
+      res.json({message: 'User has already taken quiz'})
+    }
+    else{
+      res.json({data: {quizTaken: false}})
+    }
+  },
 
   add: async (req,res) => {
     const {imgFile,name} = req.body
@@ -29,8 +43,21 @@ module.exports = {
     }
   },
 
-  getQuizQuestions: async (req,res) => {
-    const {id} = req.body
+  result: async (req,res) => {
+    console.log(req.params, req.body);
+    const quiz = await Quiz.findByPk(req.params.id)
+    const user = await User.findByPk(req.user.id)
+    try{
+      await user.addQuiz(quiz, {through: {score: req.body.score}})
+      res.json({message: 'Added to takenquizzes'})
+    }
+    catch(error){
+      res.json({error})
+    }
+  },
+
+  getQuiz: async (req,res) => {
+    const {id} = req.params
     const quiz = await Question.findAll({where: {QuizId: id}})
     res.json({data: quiz})
   },

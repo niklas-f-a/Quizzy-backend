@@ -10,6 +10,6 @@ const db = require('./connection')
 
 require('../models')()
 
-db.sync({alter: true})
+db.sync({force: true})
 
 console.log('Setup done');

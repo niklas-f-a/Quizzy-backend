@@ -5,11 +5,11 @@ const TakenQuiz = require('./TakenQuiz')
 
 
 module.exports = function setup(){
-  User.belongsToMany(Quiz, {through: TakenQuiz, onDelete: 'CASCADE'})
-  Quiz.belongsToMany(User, {through: TakenQuiz, onDelete: 'CASCADE'})
+  User.belongsToMany(Quiz, {through: TakenQuiz})
+  Quiz.belongsToMany(User, {through: TakenQuiz})
   // Quiz.belongsTo(User)
   // User.hasMany(Quiz)
   
-  Quiz.hasMany(Question, {onDelete: 'CASCADE'})
+  Quiz.hasMany(Question, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
   Question.belongsTo(Quiz)
 }
