@@ -5,12 +5,17 @@ const TakenQuiz = require('../models/TakenQuiz')
 
 module.exports = {
 
+  getAll: async (req, res) => {
+    const quizzes = await Quiz.findAll({limit:10})
+    res.json({data: quizzes})
+  },
+
   quizTaken: async (req, res) => {
     const {id} = req.params
     const quizzes = await TakenQuiz.findAll({where: req.user.id})
     const quizTaken = quizzes.some(quiz => quiz.QuizId == id)
     if(quizTaken){
-      res.json({message: 'User has already taken quiz'})
+      res.json({data: {quizTaken: true}})
     }
     else{
       res.json({data: {quizTaken: false}})

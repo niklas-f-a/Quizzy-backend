@@ -2,7 +2,7 @@ const {Router} = require('express')
 const UserController = require('../controllers/UserController')
 const Auth = require('../middleware/auth')
 
-const router = new Router
+const router = new Router()
 
 
 router.get('/me', 

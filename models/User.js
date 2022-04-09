@@ -18,7 +18,7 @@ class User extends Model{
         id: user.id,
         email: user.email
       }
-      return jwt.sign(payload, process.env.JWTSECRET, {expiresIn: '1w'})
+      return jwt.sign(payload, process.env.JWTSECRET, {expiresIn: '1d'})
     }
   }
 }

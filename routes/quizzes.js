@@ -2,7 +2,7 @@ const {Router} = require('express')
 const QuizController = require('../controllers/QuizController')
 const Auth = require('../middleware/auth')
 
-const router = new Router
+const router = new Router()
 
 
 router.get(`/:id`, 
@@ -10,6 +10,10 @@ router.get(`/:id`,
   QuizController.getQuiz
 )
   
+router.get('/',
+  QuizController.getAll
+)
+
   
 router.post('/', 
   Auth.verify,

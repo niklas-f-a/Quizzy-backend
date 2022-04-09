@@ -17,6 +17,7 @@ app.use( express.json() )
 
 app.use('/api/users', routes.users)
 app.use('/api/quizzes', routes.quizzes)
+app.use('/api/images', routes.images)
 
 
 
