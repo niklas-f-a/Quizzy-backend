@@ -3,13 +3,31 @@ const Question = require('../models/Question')
 const User = require('../models/User')
 const TakenQuiz = require('../models/TakenQuiz')
 
+const pageSize = 10
+
+function parsePage(query){
+  let page = +query.page || 1
+  return page
+}
+
+
 module.exports = {
 
   getAll: async (req, res) => {
-    const quizzes = await Quiz.findAll({limit:10})
-    res.json({data: quizzes})
+    const page = parsePage(req.query)
+    try{
+      const quizzes = await Quiz.findAll({
+        where: {CategoryId: req.query.category},
+        limit: pageSize,
+        offset: (page-1)*10
+      })
+      res.json({data: quizzes})
+    }
+    catch(error){
+      res.json({error})
+    }
   },
-
+  
   quizTaken: async (req, res) => {
     const {id} = req.params
     const quizzes = await TakenQuiz.findAll({where: req.user.id})
@@ -49,7 +67,6 @@ module.exports = {
   },
 
   result: async (req,res) => {
-    console.log(req.params, req.body);
     const quiz = await Quiz.findByPk(req.params.id)
     const user = await User.findByPk(req.user.id)
     try{

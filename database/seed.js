@@ -2,16 +2,20 @@ const User = require('../models/User')
 const Question = require('../models/Question')
 const Quiz = require('../models/Quiz')
 const TakenQuiz = require('../models/TakenQuiz')
+const Category = require('../models/Category')
 require('../models')()
+const CATEGORIES = [{name: 'music'}, {name: 'nature'}, {name: 'movie'}, {name: 'mix'}]
 
 async function seed(){
   await User.destroy({where: {}, truncate: true})
   await Question.destroy({where: {}, truncate: true})
   await Quiz.destroy({where: {}, truncate: true})
   await TakenQuiz.destroy({where: {}, truncate: true})
-  
+
+
+  await Category.bulkCreate(CATEGORIES)
   const user1 = await User.create({email: 'bingo@bongo.com', hashPassword: 'sdjvbkjsbdvljsebdn'})
-  const quiz = await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bulle'})
+  const quiz = await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bulle', CategoryId: 1})
   await quiz.createQuestion({
     question:'How many potatoes is there in Norway',
     rightAnswer: 'Blue',
@@ -34,6 +38,12 @@ async function seed(){
     answer4: 'high'  
   })
   user1.addQuiz(quiz, {through: {score: 100}})
+  await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bille', CategoryId: 1})
+  await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bxlxle', CategoryId: 1})
+  await Quiz.create({imgFile: 'bingo.png', userId: 2, name: 'lov', CategoryId: 2})
+  await Quiz.create({imgFile: 'bingo.png', userId: 2, name: 'qwqw', CategoryId: 3})
+  await Quiz.create({imgFile: 'bingo.png', userId: 2, name: 'qwwdsqw', CategoryId: 4})
+  
   
   
   console.log('Seeding done');

@@ -1,9 +1,13 @@
 const {Router} = require('express')
 const QuizController = require('../controllers/QuizController')
+const CategoryController = require('../controllers/CategoryController')
 const Auth = require('../middleware/auth')
 
 const router = new Router()
 
+router.get('/categories', 
+  CategoryController.getCategories
+)
 
 router.get(`/:id`, 
   Auth.verify,

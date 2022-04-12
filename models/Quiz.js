@@ -1,7 +1,12 @@
 const db = require('../database/connection')
 const {DataTypes, Model} = require('sequelize')
 
-class Quiz extends Model{}
+class Quiz extends Model{
+  static async byCategory(page, cat){
+
+    // console.log(page, cat);
+  }
+}
 
 Quiz.init({
   name: {
