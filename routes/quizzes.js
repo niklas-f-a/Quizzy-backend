@@ -12,9 +12,10 @@ router.get('/categories',
 router.get(`/:id`, 
   Auth.verify,
   QuizController.getQuiz
-)
+  )
   
-router.get('/',
+  router.get('/categories/:categoryId',
+  Auth.verify,
   QuizController.getAll
 )
 

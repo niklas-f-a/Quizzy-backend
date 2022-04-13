@@ -15,7 +15,7 @@ async function seed(){
 
   await Category.bulkCreate(CATEGORIES)
   const user1 = await User.create({email: 'bingo@bongo.com', hashPassword: 'sdjvbkjsbdvljsebdn'})
-  const quiz = await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bulle', CategoryId: 1})
+  const quiz = await Quiz.create({imgFile: 'niko-photos-tGTVxeOr_Rs-unsplash.webp', userId: 1, name: 'bulle', CategoryId: 1})
   await quiz.createQuestion({
     question:'How many potatoes is there in Norway',
     rightAnswer: 'Blue',
@@ -38,11 +38,11 @@ async function seed(){
     answer4: 'high'  
   })
   user1.addQuiz(quiz, {through: {score: 100}})
-  await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bille', CategoryId: 1})
-  await Quiz.create({imgFile: 'bingo.png', userId: 1, name: 'bxlxle', CategoryId: 1})
-  await Quiz.create({imgFile: 'bingo.png', userId: 2, name: 'lov', CategoryId: 2})
-  await Quiz.create({imgFile: 'bingo.png', userId: 2, name: 'qwqw', CategoryId: 3})
-  await Quiz.create({imgFile: 'bingo.png', userId: 2, name: 'qwwdsqw', CategoryId: 4})
+  await Quiz.create({imgFile: 'niko-photos-tGTVxeOr_Rs-unsplash.webp', userId: 1, name: 'bille', CategoryId: 1})
+  await Quiz.create({imgFile: 'niko-photos-tGTVxeOr_Rs-unsplash.webp', userId: 1, name: 'bxlxle', CategoryId: 1})
+  await Quiz.create({imgFile: 'niko-photos-tGTVxeOr_Rs-unsplash.webp', userId: 2, name: 'lov', CategoryId: 2})
+  await Quiz.create({imgFile: 'niko-photos-tGTVxeOr_Rs-unsplash.webp', userId: 2, name: 'qwqw', CategoryId: 3})
+  await Quiz.create({imgFile: 'niko-photos-tGTVxeOr_Rs-unsplash.webp', userId: 2, name: 'qwwdsqw', CategoryId: 4})
   
   
   

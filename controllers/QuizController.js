@@ -2,30 +2,24 @@ const Quiz = require('../models/Quiz')
 const Question = require('../models/Question')
 const User = require('../models/User')
 const TakenQuiz = require('../models/TakenQuiz')
+const { query } = require('../database/connection')
 
 const pageSize = 10
 
-function parsePage(query){
-  let page = +query.page || 1
-  return page
-}
 
 
 module.exports = {
 
   getAll: async (req, res) => {
-    const page = parsePage(req.query)
-    try{
-      const quizzes = await Quiz.findAll({
-        where: {CategoryId: req.query.category},
-        limit: pageSize,
-        offset: (page-1)*10
-      })
-      res.json({data: quizzes})
-    }
-    catch(error){
-      res.json({error})
-    }
+    const page = +query.page || 1
+    console.log(page);
+    const quizzes = await Quiz.findAll({
+      where: {CategoryId: req.params.categoryId},
+      limit: pageSize,
+      offset: (page-1)*10
+    })
+    res.json({data: quizzes})
+  
   },
   
   quizTaken: async (req, res) => {
