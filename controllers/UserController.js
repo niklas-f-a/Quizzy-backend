@@ -39,7 +39,7 @@ module.exports = {
     try{
       const user = await User.create({email,hashPassword:password})
       const token = await User.validate(email,password)
-      res.json({
+      res.status(201).json({
         message: 'User registered',
         token,
         user: {
@@ -58,10 +58,14 @@ module.exports = {
     try{
       const token = await User.validate(email,password)
       res.json({token})
+
+    }catch(error){
+      console.log(error);
+      res.status(401).json({error: 'Invalid credentials'})
     }
-    catch(error){
-      res.json({error})
-    }
+    
+   
+   
   }
 
   

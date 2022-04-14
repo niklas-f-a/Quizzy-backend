@@ -20,6 +20,9 @@ class User extends Model{
       }
       return jwt.sign(payload, process.env.JWTSECRET, {expiresIn: '1d'})
     }
+    else{
+      throw new Error('Invalid credentials')
+    }
   }
 }
 

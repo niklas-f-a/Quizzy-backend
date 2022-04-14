@@ -24,13 +24,12 @@ module.exports = {
   
   quizTaken: async (req, res) => {
     const {id} = req.params
-    const quizzes = await TakenQuiz.findAll({where: req.user.id})
-    const quizTaken = quizzes.some(quiz => quiz.QuizId == id)
+    const quizTaken = await TakenQuiz.findOne({where: {UserId: req.user.id, QuizId: id}})
     if(quizTaken){
-      res.json({data: {quizTaken: true}})
+      res.status(401).send({error: 'Unauthorized'})
     }
     else{
-      res.json({data: {quizTaken: false}})
+      res.status(200).send({message: 'ok'})
     }
   },
 
@@ -61,6 +60,7 @@ module.exports = {
   },
 
   result: async (req,res) => {
+    console.log(req.params.id, req.user.id, req.body.score);
     const quiz = await Quiz.findByPk(req.params.id)
     const user = await User.findByPk(req.user.id)
     try{
