@@ -14,7 +14,7 @@ async function seed(){
 
 
   await Category.bulkCreate(CATEGORIES)
-  const user1 = await User.create({email: 'bingo@bongo.com', hashPassword: 'sdjvbkjsbdvljsebdn'})
+  const user1 = await User.create({email: 'bingo@bongo.com', hashPassword: 'ballong'})
   const quiz = await Quiz.create({imgFile: 'niko-photos-tGTVxeOr_Rs-unsplash.webp', userId: 1, name: 'bulle', CategoryId: 1})
   await quiz.createQuestion({
     question:'How many potatoes is there in Norway',

@@ -10,9 +10,8 @@ const pageSize = 10
 
 module.exports = {
 
-  getAll: async (req, res) => {
+  getAllByCategory: async (req, res) => {
     const page = +query.page || 1
-    console.log(page);
     const quizzes = await Quiz.findAll({
       where: {CategoryId: req.params.categoryId},
       limit: pageSize,
@@ -60,7 +59,6 @@ module.exports = {
   },
 
   result: async (req,res) => {
-    console.log(req.params.id, req.user.id, req.body.score);
     const quiz = await Quiz.findByPk(req.params.id)
     const user = await User.findByPk(req.user.id)
     try{
@@ -70,6 +68,12 @@ module.exports = {
     catch(error){
       res.json({error})
     }
+  },
+
+  getUsersQuiz: async (req, res) => {
+    const id = req.params.id //get users quiz
+    const userQuizzes = await Quiz.findAll({ where: {UserId: id} })
+    res.json({data: userQuizzes})
   },
 
   getQuiz: async (req,res) => {

@@ -4,7 +4,6 @@ const User = require('../models/User')
 module.exports = {
 
   delete: async (req,res) => {
-    console.log(req.user);
     try{
       const user = await User.findByPk(req.user.id)
       await user.destroy()
@@ -18,8 +17,10 @@ module.exports = {
   me: async (req,res) => {
     const {id, email} = req.user
     res.json({
-      id,
-      email
+      data: {
+        id,
+        email
+      }
     })
   },
   
@@ -60,7 +61,6 @@ module.exports = {
       res.json({token})
 
     }catch(error){
-      console.log(error);
       res.status(401).json({error: 'Invalid credentials'})
     }
     
