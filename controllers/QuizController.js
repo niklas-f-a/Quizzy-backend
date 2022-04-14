@@ -2,7 +2,7 @@ const Quiz = require('../models/Quiz')
 const Question = require('../models/Question')
 const User = require('../models/User')
 const TakenQuiz = require('../models/TakenQuiz')
-const { query } = require('../database/connection')
+const Category = require('../models/Category')
 
 const pageSize = 10
 
@@ -71,8 +71,16 @@ module.exports = {
   },
 
   getUsersQuiz: async (req, res) => {
-    const id = req.params.id //get users quiz
-    const userQuizzes = await Quiz.findAll({ where: {UserId: id} })
+    const id = req.params.id 
+    const userQuizzes = await Quiz.findAll({ 
+      where: {
+        UserId: id
+      }, 
+      include: {
+        model: Category, 
+        attributes: ['name']
+      }
+    })
     res.json({data: userQuizzes})
   },
 
