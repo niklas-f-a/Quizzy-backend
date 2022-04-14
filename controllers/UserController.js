@@ -49,7 +49,7 @@ module.exports = {
       })
     }
     catch(error){
-      res.json({error})
+      res.status(409).json({error: error.ValidationErrorItem})
     }
   },
 
