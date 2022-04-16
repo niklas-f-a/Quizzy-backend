@@ -11,11 +11,11 @@ const pageSize = 10
 module.exports = {
 
   getAllByCategory: async (req, res) => {
-    const page = +query.page || 1
+    // const page = +query.page || 1
     const quizzes = await Quiz.findAll({
       where: {CategoryId: req.params.categoryId},
       limit: pageSize,
-      offset: (page-1)*10
+      // offset: (page-1)*10
     })
     res.json({data: quizzes})
   
@@ -33,14 +33,15 @@ module.exports = {
   },
 
   add: async (req,res) => {
-    const {imgFile,name} = req.body
+    const {imgFile,name, CategoryId} = req.body
+    const category = await Category.findByPk(CategoryId)
     try{
-      const quiz = await Quiz.create({imgFile,name, userId:req.user.id})
-      res.json({message: `Success! Quiz ${quiz.name} created. Add some quetions.`,
+      const quiz = await category.createQuiz({imgFile,name, userId:req.user.id})
+      res.status(201).json({message: `Success! Quiz ${quiz.name} created. Add some quetions.`,
       data: quiz})
     }
     catch(error){
-      res.json({message: error})
+      res.status(409).json({error: "Test with that name already exists"})
     }
   },
 
