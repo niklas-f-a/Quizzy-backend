@@ -92,25 +92,18 @@ module.exports = {
   },
   
   addQuestion: async(req,res) => {
-      await Question.bulkCreate(req.body)
-      res.json({message: 'Added question to quiz'})
+    await Question.bulkCreate(req.body)
+    res.json({message: 'Added question to quiz'})
   },
 
   updateQuestion: async (req,res) => {
-    const {quizId, questionId} = req.params
-    const quiz = await Quiz.findByPk(quizId)
-    if(quiz.userId !== req.user.id){
-      res.json({message: 'Not Your Quiz'})
+    try{
+      const question = await Question.findByPk(req.params.questionId)
+      await question.update(req.body)
+      res.json({data: question})
     }
-    else{
-      try{
-        const question = await Question.findByPk(questionId)
-        await question.update(req.body)
-        res.json({data: question})
-      }
-      catch(error){
-        res.json({error})
-      }
+    catch(error){
+      res.json({error})
     }
   },
 

@@ -51,7 +51,7 @@ router.put(`/`,
   QuizController.addQuestion
 )
 
-router.patch('/:quizId/:questionId',
+router.patch('/Question/:questionId',
   Auth.verify,
   QuizController.updateQuestion
 )
