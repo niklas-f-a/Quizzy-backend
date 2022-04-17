@@ -92,14 +92,8 @@ module.exports = {
   },
   
   addQuestion: async(req,res) => {
-    const quiz = await Quiz.findByPk(req.params.quizId)
-    if(quiz.userId !== req.user.id){
-      res.json({message: 'Not your quiz'})
-    }
-    else{
-      await quiz.createQuestion(req.body)
+      await Question.bulkCreate(req.body)
       res.json({message: 'Added question to quiz'})
-    }
   },
 
   updateQuestion: async (req,res) => {

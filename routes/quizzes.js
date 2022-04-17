@@ -46,7 +46,7 @@ router.delete('/:quizId/:questionId',
   QuizController.deleteQuestion
 )
 
-router.put(`/:quizId/`, 
+router.put(`/`, 
   Auth.verify,
   QuizController.addQuestion
 )

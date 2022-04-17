@@ -11,9 +11,10 @@ module.exports = {
     }
     if(fs.existsSync(path.join('public','images',req.files.imgFile.name))){
       res.status(400).json({message: 'Image already exist'})
+    }else{
+      fs.copyFileSync(req.files.imgFile.tempFilePath, path.join('public','images', req.files.imgFile.name))
+      res.json({message: 'Image uploaded'})
     }
-    fs.copyFileSync(req.files.imgFile.tempFilePath, path.join('public','images', req.files.imgFile.name))
-    res.json({message: 'Image uploaded'})
     
   }
 
