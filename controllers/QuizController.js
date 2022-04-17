@@ -100,7 +100,7 @@ module.exports = {
     try{
       const question = await Question.findByPk(req.params.questionId)
       await question.update(req.body)
-      res.json({data: question})
+      res.status(200).send({message: 'Updated question succesful'})
     }
     catch(error){
       res.json({error})
