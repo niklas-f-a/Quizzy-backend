@@ -11,11 +11,11 @@ const pageSize = 10
 module.exports = {
 
   getAllByCategory: async (req, res) => {
-    // const page = +query.page || 1
+    const page = +req.query.page || 1
     const quizzes = await Quiz.findAll({
       where: {CategoryId: req.params.categoryId},
       limit: pageSize,
-      // offset: (page-1)*10
+      offset: (page-1)*pageSize
     })
     res.json({data: quizzes})
   
