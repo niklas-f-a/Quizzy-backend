@@ -3,6 +3,7 @@ const Question = require('../models/Question')
 const User = require('../models/User')
 const TakenQuiz = require('../models/TakenQuiz')
 const Category = require('../models/Category')
+const sequelize = require('sequelize')
 
 const pageSize = 10
 
@@ -15,10 +16,15 @@ module.exports = {
     const quizzes = await Quiz.findAll({
       where: {CategoryId: req.params.categoryId},
       limit: pageSize,
-      offset: (page-1)*pageSize
+      offset: (page-1)*pageSize, 
     })
-    res.json({data: quizzes})
-  
+    const categoryCount = await Quiz.findOne({
+      where: {CategoryId: req.params.categoryId},
+      attributes: [
+        [sequelize.fn('COUNT', sequelize.col('CategoryId')), 'counts']
+      ]
+    })
+    res.json({categoryCount, data: quizzes})
   },
   
   quizTaken: async (req, res) => {
@@ -72,17 +78,28 @@ module.exports = {
   },
 
   getUsersQuiz: async (req, res) => {
+    const page = req.query.page || 1
     const id = req.params.id 
-    const userQuizzes = await Quiz.findAll({ 
+    const userQuizCount = await Quiz.findOne({
       where: {
         UserId: id
+      },
+      attributes: [
+        [sequelize.fn('COUNT', sequelize.col('UserId')), 'counts']
+      ]
+    })
+    const userQuizzes = await Quiz.findAll({ 
+      where: {
+        UserId: id, 
       }, 
+      limit: pageSize, 
+      offset: (page-1)*pageSize,
       include: {
         model: Category, 
         attributes: ['name']
       }
     })
-    res.json({data: userQuizzes})
+    res.json({userQuizCount, data: userQuizzes})
   },
 
   getQuiz: async (req,res) => {
