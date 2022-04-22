@@ -2,18 +2,19 @@ const {Router} = require('express')
 const QuizController = require('../controllers/QuizController')
 const CategoryController = require('../controllers/CategoryController')
 const Auth = require('../middleware/auth')
+const Validate = require('../validators/quiz')
 
 const router = new Router()
 
-router.get('/categories', 
+router.get('/categories',
   CategoryController.getCategories
 )
 
-router.get(`/:id`, 
+router.get(`/:id`,
   Auth.verify,
   QuizController.getQuiz
 )
-  
+
 router.get('/categories/:categoryId',
   Auth.verify,
   QuizController.getAllByCategory
@@ -24,20 +25,16 @@ router.get('/users/:id',
   QuizController.getUsersQuiz
 )
 
-  
-router.post('/', 
+
+router.post('/',
   Auth.verify,
+  Validate.addQuiz,
   QuizController.add
 )
-  
-router.delete('/:id',
-Auth.verify,
-QuizController.delete
-)
 
-
-router.post('/result/:id', 
+router.post('/result/:id',
   Auth.verify,
+  Validate.quizResult,
   QuizController.result
 )
 
@@ -46,21 +43,27 @@ router.delete('/:quizId/:questionId',
   QuizController.deleteQuestion
 )
 
-router.put(`/`, 
+router.put(`/`,
   Auth.verify,
+  Validate.question,
   QuizController.addQuestion
 )
 
 router.patch('/Question/:questionId',
   Auth.verify,
+  Validate.question,
   QuizController.updateQuestion
 )
 
-router.get('/Taken/:id', 
+router.get('/Taken/:id',
   Auth.verify,
   QuizController.quizTaken
 )
 
+router.delete('/:id',
+Auth.verify,
+QuizController.delete
+)
 
 
 module.exports = router

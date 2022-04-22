@@ -10,9 +10,10 @@ const {QuizError, UserError} = require('../error')
 module.exports = {
 
   getAllByCategory: async (req, res, next) => {
+    const maxPageSize = 10
     let pageSize
     const page = +req.query.page || 1
-    if(req.query.pageSize > 10){
+    if(req.query.pageSize > maxPageSize){
       pageSize = 10
     }else{
       pageSize = +req.query.pageSize || 10
