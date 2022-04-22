@@ -46,9 +46,7 @@ module.exports = {
       if(quizTaken){
         throw new QuizError(401, 'User has already taken quiz')
       }
-      else{
-        res.status(200).send({message: 'ok'})
-      }
+      res.status(200).send({message: 'ok'})
     }catch(error){
       next(error)
     }
@@ -76,10 +74,8 @@ module.exports = {
       if(quiz.userId !== req.user.id){
         throw new QuizError(401, 'Not your quiz')
       }
-      else{
-        await quiz.destroy()
-        res.json({message: 'Quiz destroyed'})
-      }
+      await quiz.destroy()
+      res.json({message: 'Quiz destroyed'})
     }catch(error){
       next(error)
     }
@@ -90,11 +86,10 @@ module.exports = {
     const user = await User.findByPk(req.user.id)
     try{
       const takenQuiz = await user.addQuiz(quiz, {through: {score: req.body.score}})
-      if(takenQuiz.length){
-        res.json({message: 'Added to takenquizzes'})
-      }else{
+      if(!takenQuiz.length){
         throw new QuizError(500, 'Unable to store result')
       }
+      res.json({message: 'Added to takenquizzes'})
     }catch(error){
       next(error)
     }
@@ -125,9 +120,8 @@ module.exports = {
       })
       if(!userQuizzes.length){
         throw new UserError(404, 'Could not find any quizzes from this user')
-      }else{
-        res.json({userQuizCount, data: userQuizzes})
       }
+      res.json({userQuizCount, data: userQuizzes})
     }catch(error){
       next(error)
     }

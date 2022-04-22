@@ -8,10 +8,9 @@ module.exports = {
       const user = await User.findByPk(req.user.id)
       if(!user.length){
         throw new UserError(404, 'No such user')
-      }else{
-        await user.destroy()
-        res.json({message: 'Destroyed'})
       }
+      await user.destroy()
+      res.json({message: 'Destroyed'})
     }
     catch(error){
       next(error)
@@ -33,10 +32,9 @@ module.exports = {
       const user = await User.findByPk(req.user.id)
       if(!user.length){
         throw new UserError(404, 'No such user')
-      }else{
-        await user.update({email:req.body.email, hashPassword:req.body.password})
-        res.json({message: 'Updated'})
       }
+      await user.update({email:req.body.email, hashPassword:req.body.password})
+      res.json({message: 'Updated'})
     }
     catch(error){
       next(error)
