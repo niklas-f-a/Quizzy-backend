@@ -3,10 +3,13 @@ require('dotenv').config()
 const routes = require('./routes')
 const logger = require('./middleware/logger')
 const cors = require('cors')
+const errorHandler = require('./middleware/errorHandler')
+
 
 require('./models')()
 
 const app = express()
+
 
 app.use( cors() )
 app.use(express.urlencoded({ extended: true }))
@@ -18,6 +21,8 @@ app.use( express.json() )
 app.use('/api/users', routes.users)
 app.use('/api/quizzes', routes.quizzes)
 app.use('/api/images', routes.images)
+
+app.use(errorHandler)
 
 
 

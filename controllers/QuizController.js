@@ -4,44 +4,60 @@ const User = require('../models/User')
 const TakenQuiz = require('../models/TakenQuiz')
 const Category = require('../models/Category')
 const sequelize = require('sequelize')
-
-const pageSize = 10
-
+const {QuizError, UserError} = require('../error')
 
 
 module.exports = {
 
-  getAllByCategory: async (req, res) => {
+  getAllByCategory: async (req, res, next) => {
+    let pageSize
     const page = +req.query.page || 1
-    const quizzes = await Quiz.findAll({
-      where: {CategoryId: req.params.categoryId},
-      limit: pageSize,
-      offset: (page-1)*pageSize, 
-    })
-    const categoryCount = await Quiz.findOne({
-      where: {CategoryId: req.params.categoryId},
-      attributes: [
-        [sequelize.fn('COUNT', sequelize.col('CategoryId')), 'counts']
-      ]
-    })
-    res.json({categoryCount, data: quizzes})
-  },
-  
-  quizTaken: async (req, res) => {
-    const {id} = req.params
-    const quizTaken = await TakenQuiz.findOne({where: {UserId: req.user.id, QuizId: id}})
-    if(quizTaken){
-      res.status(401).send({error: 'Unauthorized'})
+    if(req.query.pageSize > 10){
+      pageSize = 10
+    }else{
+      pageSize = +req.query.pageSize || 10
     }
-    else{
-      res.status(200).send({message: 'ok'})
+    try{
+      const quizzes = await Quiz.findAll({
+        where: {CategoryId: req.params.categoryId},
+        limit: pageSize,
+        offset: (page-1)*pageSize,
+        include: Category
+      })
+      if(!quizzes.length){
+        throw new QuizError(404, 'Could not find any quizzes with that category id')
+      }
+      const categoryCount = await Quiz.findOne({
+        where: {CategoryId: req.params.categoryId},
+        attributes: [
+          [sequelize.fn('COUNT', sequelize.col('CategoryId')), 'counts']
+        ]
+      })
+      res.json({categoryCount, data: quizzes})
+    }catch(error){
+      next(error)
+    }
+  },
+
+  quizTaken: async (req, res, next) => {
+    const {id} = req.params
+    try{
+      const quizTaken = await TakenQuiz.findOne({where: {UserId: req.user.id, QuizId: id}})
+      if(quizTaken){
+        throw new QuizError(401, 'User has already taken quiz')
+      }
+      else{
+        res.status(200).send({message: 'ok'})
+      }
+    }catch(error){
+      next(error)
     }
   },
 
   add: async (req,res) => {
-    const {imgFile,name, CategoryId} = req.body
-    const category = await Category.findByPk(CategoryId)
     try{
+      const {imgFile,name, CategoryId} = req.body
+      const category = await Category.findByPk(CategoryId)
       const quiz = await category.createQuiz({imgFile,name, userId:req.user.id})
       res.status(201).json({message: `Success! Quiz ${quiz.name} created. Add some quetions.`,
       data: quiz})
@@ -51,55 +67,70 @@ module.exports = {
     }
   },
 
-  delete: async (req,res) => {
-    const quiz = await Quiz.findByPk(req.params.id)
-    if(!quiz){
-      res.json({message: 'Quiz not found'})
-    }
-    if(quiz.userId !== req.user.id){
-      res.json({message: 'Quiz has not been deleted'})
-    }
-    else{
-      await quiz.destroy()
-      res.json({message: 'Quiz destroyed'})
+  delete: async (req,res, next) => {
+    try{
+      const quiz = await Quiz.findByPk(req.params.id)
+      if(!quiz){
+        throw new QuizError(404, 'Quiz not found')
+      }
+      if(quiz.userId !== req.user.id){
+        throw new QuizError(401, 'Not your quiz')
+      }
+      else{
+        await quiz.destroy()
+        res.json({message: 'Quiz destroyed'})
+      }
+    }catch(error){
+      next(error)
     }
   },
 
-  result: async (req,res) => {
+  result: async (req,res, next) => {
     const quiz = await Quiz.findByPk(req.params.id)
     const user = await User.findByPk(req.user.id)
     try{
-      await user.addQuiz(quiz, {through: {score: req.body.score}})
-      res.json({message: 'Added to takenquizzes'})
-    }
-    catch(error){
-      res.json({error})
+      const takenQuiz = await user.addQuiz(quiz, {through: {score: req.body.score}})
+      if(takenQuiz.length){
+        res.json({message: 'Added to takenquizzes'})
+      }else{
+        throw new QuizError(500, 'Unable to store result')
+      }
+    }catch(error){
+      next(error)
     }
   },
 
-  getUsersQuiz: async (req, res) => {
+  getUsersQuiz: async (req, res, next) => {
     const page = req.query.page || 1
-    const id = req.params.id 
-    const userQuizCount = await Quiz.findOne({
-      where: {
-        UserId: id
-      },
-      attributes: [
-        [sequelize.fn('COUNT', sequelize.col('UserId')), 'counts']
-      ]
-    })
-    const userQuizzes = await Quiz.findAll({ 
-      where: {
-        UserId: id, 
-      }, 
-      limit: pageSize, 
-      offset: (page-1)*pageSize,
-      include: {
-        model: Category, 
-        attributes: ['name']
+    const id = req.params.id
+    try{
+      const userQuizCount = await Quiz.findOne({
+        where: {
+          UserId: id
+        },
+        attributes: [
+          [sequelize.fn('COUNT', sequelize.col('UserId')), 'counts']
+        ]
+      })
+      const userQuizzes = await Quiz.findAll({
+        where: {
+          UserId: id,
+        },
+        limit: 10,
+        offset: (page-1)*10,
+        include: {
+          model: Category,
+          attributes: ['name']
+        }
+      })
+      if(!userQuizzes.length){
+        throw new UserError(404, 'Could not find any quizzes from this user')
+      }else{
+        res.json({userQuizCount, data: userQuizzes})
       }
-    })
-    res.json({userQuizCount, data: userQuizzes})
+    }catch(error){
+      next(error)
+    }
   },
 
   getQuiz: async (req,res) => {
@@ -107,40 +138,40 @@ module.exports = {
     const quiz = await Question.findAll({where: {QuizId: id}})
     res.json({data: quiz})
   },
-  
+
   addQuestion: async(req,res) => {
     await Question.bulkCreate(req.body)
     res.json({message: 'Added question to quiz'})
   },
 
-  updateQuestion: async (req,res) => {
+  updateQuestion: async (req,res, next) => {
     try{
       const question = await Question.findByPk(req.params.questionId)
+      if(!question.length){
+        throw new QuizError(404, 'Quiz has no questions')
+      }
       await question.update(req.body)
       res.status(200).send({message: 'Updated question succesful'})
     }
     catch(error){
-      res.json({error})
+      next(error)
     }
   },
 
-  deleteQuestion: async (req,res) => {
-    const {quizId, questionId} = req.params
-    const quiz = await Quiz.findByPk(quizId)
-    if(quiz.userId !== req.user.id){
-      res.json({message: 'Not Your Quiz'})
+  deleteQuestion: async (req,res, next) => {
+    try{
+      const {quizId, questionId} = req.params
+      const quiz = await Quiz.findByPk(quizId)
+      if(quiz.userId !== req.user.id){
+        throw new QuizError(401, 'Not your quiz')
+      }
+      const question = await Question.findByPk(questionId)
+      await question.destroy()
+      res.json({message: 'Destroyed'})
     }
-    else{
-      try{
-        const question = await Question.findByPk(questionId)
-        await question.destroy()
-        res.json({message: 'Destroyed'})
-      }
-      catch(error){
-        res.json({error})
-      }
+    catch(error){
+      next(error)
     }
   }
-  
-  
+
 }

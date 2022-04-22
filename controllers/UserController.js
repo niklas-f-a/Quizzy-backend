@@ -1,16 +1,20 @@
 const User = require('../models/User')
-
+const {UserError} = require('../error')
 
 module.exports = {
 
-  delete: async (req,res) => {
+  delete: async (req,res, next) => {
     try{
       const user = await User.findByPk(req.user.id)
-      await user.destroy()
-      res.json({message: 'Destroyed'})
+      if(!user.length){
+        throw new UserError(404, 'No such user')
+      }else{
+        await user.destroy()
+        res.json({message: 'Destroyed'})
+      }
     }
     catch(error){
-      res.json({message: error})
+      next(error)
     }
   },
 
@@ -23,15 +27,19 @@ module.exports = {
       }
     })
   },
-  
-  update: async (req,res) => {
+
+  update: async (req,res, next) => {
     try{
       const user = await User.findByPk(req.user.id)
-      await user.update({email:req.body.email, hashPassword:req.body.password})
-      res.json({message: 'Updated'})
+      if(!user.length){
+        throw new UserError(404, 'No such user')
+      }else{
+        await user.update({email:req.body.email, hashPassword:req.body.password})
+        res.json({message: 'Updated'})
+      }
     }
     catch(error){
-      res.json({error})
+      next(error)
     }
   },
 
@@ -54,20 +62,16 @@ module.exports = {
     }
   },
 
-  validate: async (req,res) => {
+  validate: async (req,res, next) => {
     const {email,password} = req.body
     try{
       const token = await User.validate(email,password)
       res.json({token})
 
     }catch(error){
-      res.status(401).json({error: 'Invalid credentials'})
+      next(error)
     }
-    
-   
-   
   }
 
-  
 
 }

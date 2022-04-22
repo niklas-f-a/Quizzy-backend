@@ -2,6 +2,7 @@ const db = require('../database/connection')
 const {DataTypes, Model} = require('sequelize')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const {UserError} = require('../error')
 
 require('dotenv').config()
 
@@ -10,7 +11,7 @@ class User extends Model{
   static async validate (email,password) {
     const user = await User.findOne({where: {email:email}})
     if(!user){
-      throw new Error('No such User')
+      throw new UserError(404, 'No such User')
     }
     const passwordMatch = bcrypt.compareSync(password, user.hashPassword)
     if(passwordMatch){
@@ -21,7 +22,7 @@ class User extends Model{
       return jwt.sign(payload, process.env.JWTSECRET, {expiresIn: '1d'})
     }
     else{
-      throw new Error('Invalid credentials')
+      throw new UserError(401, 'Invalid credentials')
     }
   }
 }
