@@ -4,6 +4,7 @@ const routes = require('./routes')
 const logger = require('./middleware/logger')
 const cors = require('cors')
 const errorHandler = require('./middleware/errorHandler')
+const _404 = require('./routes/404')
 
 
 require('./models')()
@@ -23,6 +24,7 @@ app.use('/api/quizzes', routes.quizzes)
 app.use('/api/images', routes.images)
 
 app.use(errorHandler)
+app.use(_404)
 
 
 
