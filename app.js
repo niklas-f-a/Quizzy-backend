@@ -12,7 +12,9 @@ require('./models')()
 const app = express()
 
 
-app.use( cors() )
+app.use( cors({
+  origin: "http://localhost:8080"
+}))
 app.use(express.urlencoded({ extended: true }))
 app.use( logger )
 app.use( express.static('public') )
